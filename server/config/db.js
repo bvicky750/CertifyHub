@@ -18,7 +18,8 @@ try {
     connectionLimit: 10,
     queueLimit: 0,
     enableKeepAlive: true,
-    keepAliveInitialDelay: 0
+    keepAliveInitialDelay: 0,
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined
   });
 } catch (e) {
   console.warn('MySQL pool initialization error:', e.message);
