@@ -115,33 +115,33 @@ const CourseDetails = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
       
       {/* Top Breadcrumb */}
-      <nav className="text-xs text-slate-500 flex items-center space-x-2">
-        <Link to="/courses" className="hover:text-brand-600">Courses</Link>
+      <nav className="text-xs text-slate-500 flex items-center space-x-2 font-medium">
+        <Link to="/courses" className="hover:text-brand-600 transition">Courses</Link>
         <span>/</span>
-        <span className="text-slate-800 font-medium">{course.category}</span>
+        <span className="text-slate-700">{course.category}</span>
         <span>/</span>
         <span className="text-slate-400 truncate max-w-xs">{course.title}</span>
       </nav>
 
       {/* Hero Overview Card */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-10 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.06)] grid grid-cols-1 lg:grid-cols-12 gap-8 relative overflow-hidden">
         
         {/* Left Column: Details */}
         <div className="lg:col-span-7 space-y-5">
-          <div className="flex flex-wrap gap-2">
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-brand-50 text-brand-700 border border-brand-200/80">
               {course.category}
             </span>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
               Level: {course.level}
             </span>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
-              <Award className="w-3.5 h-3.5" />
-              Verifiable Certificate
+            <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Verifiable Credential</span>
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
             {course.title}
           </h1>
 
@@ -149,30 +149,34 @@ const CourseDetails = () => {
             {course.short_description || course.description}
           </p>
 
-          <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 pt-2 border-t border-slate-100">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold">
+          <div className="flex flex-wrap items-center gap-6 text-xs text-slate-600 pt-3 border-t border-slate-100">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-accent-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                 {course.instructor_name.charAt(0)}
               </div>
               <div>
-                <p className="text-[10px] uppercase text-slate-400 font-semibold">Instructor</p>
-                <p className="font-semibold text-slate-800">{course.instructor_name}</p>
+                <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Instructor</p>
+                <p className="font-bold text-slate-800">{course.instructor_name}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-slate-400" />
+              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                <Clock className="w-4 h-4" />
+              </div>
               <div>
-                <p className="text-[10px] uppercase text-slate-400 font-semibold">Duration</p>
-                <p className="font-semibold text-slate-800">{course.duration}</p>
+                <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Duration</p>
+                <p className="font-bold text-slate-800">{course.duration}</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-2">
-              <BookOpen className="w-5 h-5 text-slate-400" />
+              <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500">
+                <BookOpen className="w-4 h-4" />
+              </div>
               <div>
-                <p className="text-[10px] uppercase text-slate-400 font-semibold">Curriculum</p>
-                <p className="font-semibold text-slate-800">
+                <p className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">Curriculum</p>
+                <p className="font-bold text-slate-800">
                   {course.module_count} Modules • {course.lesson_count} Lessons
                 </p>
               </div>
@@ -181,17 +185,17 @@ const CourseDetails = () => {
 
           {/* Feedback message */}
           {feedbackMsg && (
-            <div className="p-3.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-800 text-xs font-medium">
+            <div className="p-3.5 rounded-xl bg-brand-50 border border-brand-200 text-brand-800 text-xs font-semibold">
               {feedbackMsg}
             </div>
           )}
 
           {/* Call to action */}
-          <div className="pt-4 flex flex-col sm:flex-row gap-4">
+          <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             {isEnrolled ? (
               <Link
                 to={`/learn/${course.id}`}
-                className="inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition text-sm"
+                className="inline-flex items-center justify-center space-x-2 px-7 py-3.5 rounded-2xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 transition text-sm hover:-translate-y-0.5"
               >
                 <span>Continue Learning</span>
                 <ArrowRight className="w-4 h-4" />
@@ -200,7 +204,7 @@ const CourseDetails = () => {
               <button
                 onClick={handleEnroll}
                 disabled={enrolling}
-                className="inline-flex items-center justify-center space-x-2 px-8 py-3.5 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 shadow-lg shadow-brand-600/25 transition text-sm disabled:opacity-50"
+                className="inline-flex items-center justify-center space-x-2 px-8 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-r from-brand-600 to-brand-700 hover:from-brand-500 hover:to-brand-600 shadow-lg shadow-brand-600/30 transition text-sm hover:-translate-y-0.5 disabled:opacity-50"
               >
                 <span>{enrolling ? 'Enrolling...' : 'Enroll in Course Now — Free'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -218,29 +222,29 @@ const CourseDetails = () => {
 
         {/* Right Column: Visual Preview */}
         <div className="lg:col-span-5 flex flex-col justify-between">
-          <div className="rounded-2xl overflow-hidden aspect-video border border-slate-200 shadow-inner bg-slate-100">
+          <div className="rounded-2xl overflow-hidden aspect-video border border-slate-200/80 shadow-md bg-slate-100 group">
             <img
               src={course.thumbnail}
               alt={course.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           </div>
 
-          <div className="mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs text-slate-600">
-            <h4 className="font-bold text-slate-900">What You Will Gain:</h4>
-            <div className="flex items-center space-x-2">
+          <div className="mt-4 p-5 rounded-2xl bg-slate-50/90 border border-slate-200/80 space-y-2.5 text-xs text-slate-600">
+            <h4 className="font-extrabold text-slate-900 uppercase tracking-wider text-[11px]">Program Highlights:</h4>
+            <div className="flex items-center space-x-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Full lifetime access to comprehensive video tutorials & notes</span>
+              <span>Full lifetime access to video tutorials & lesson materials</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Step-by-step lesson completion progress tracking</span>
+              <span>Modular progress tracking with instant completion save</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Automated final quiz evaluation with instant grading</span>
+              <span>Interactive assessment with instant backend grading</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Accredited CertifyHub Certificate downloadable as PDF</span>
             </div>

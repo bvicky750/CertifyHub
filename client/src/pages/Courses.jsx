@@ -75,56 +75,65 @@ const Courses = () => {
       
       {/* Header */}
       <div className="border-b border-slate-200 pb-6">
-        <div className="inline-flex items-center space-x-2 text-xs font-bold text-brand-600 uppercase tracking-wider mb-1">
-          <BookOpen className="w-4 h-4" />
-          <span>Course Catalog</span>
+        <div className="inline-flex items-center space-x-2 text-xs font-bold text-brand-600 uppercase tracking-wider mb-1.5 bg-brand-50 px-3 py-1 rounded-full border border-brand-100">
+          <BookOpen className="w-3.5 h-3.5" />
+          <span>Curated Course Catalog</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900">Explore Accredited Courses</h1>
-        <p className="text-sm text-slate-500 mt-1 max-w-2xl">
+        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Explore Accredited Programs</h1>
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
           Advance your technical mastery with structured modular curriculums, interactive assessments, and official certifications.
         </p>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4">
+      <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] space-y-4">
         
         {/* Top Search Line */}
         <form onSubmit={handleSearchSubmit} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by title, instructor, or topic..."
+              placeholder="Search by title, instructor, or technology..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 text-slate-800"
+              className="w-full pl-11 pr-10 py-3 rounded-2xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-slate-800 transition"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => { setSearchQuery(''); fetchCourses(); }}
+                className="absolute right-3.5 top-3.5 text-xs text-slate-400 hover:text-slate-600"
+              >
+                ✕
+              </button>
+            )}
           </div>
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-brand-600 text-white hover:bg-brand-700 shadow-sm transition"
+            className="px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold bg-brand-600 text-white hover:bg-brand-700 shadow-md shadow-brand-600/20 hover:shadow-brand-600/30 transition hover:-translate-y-0.5"
           >
-            Search
+            Search Courses
           </button>
         </form>
 
         {/* Filters and Sorting Row */}
-        <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100 text-xs">
           
           {/* Categories */}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="font-semibold text-slate-500 mr-1 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" /> Category:
+            <span className="font-bold text-slate-500 mr-1 flex items-center gap-1 text-[11px] uppercase tracking-wider">
+              <Filter className="w-3.5 h-3.5 text-brand-600" /> Category:
             </span>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-lg font-medium transition ${
+                className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all ${
                   selectedCategory === cat
                     ? 'bg-brand-600 text-white shadow-xs'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
                 }`}
               >
                 {cat}
@@ -133,15 +142,15 @@ const Courses = () => {
           </div>
 
           {/* Level & Sort controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             
             {/* Level Selector */}
-            <div className="flex items-center space-x-1">
-              <span className="text-slate-500 font-medium">Level:</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="text-slate-500 font-semibold text-xs">Level:</span>
               <select
                 value={selectedLevel}
                 onChange={(e) => setSelectedLevel(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 focus:outline-none"
+                className="bg-slate-50 border border-slate-200/90 rounded-xl px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-brand-500"
               >
                 {LEVELS.map((lvl) => (
                   <option key={lvl} value={lvl}>{lvl}</option>
@@ -150,14 +159,14 @@ const Courses = () => {
             </div>
 
             {/* Sort Selector */}
-            <div className="flex items-center space-x-1">
-              <span className="text-slate-500 font-medium">Sort:</span>
+            <div className="flex items-center space-x-1.5">
+              <span className="text-slate-500 font-semibold text-xs">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 focus:outline-none"
+                className="bg-slate-50 border border-slate-200/90 rounded-xl px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-brand-500"
               >
-                <option value="recent">Newest</option>
+                <option value="recent">Newest Programs</option>
                 <option value="title">Course Title (A-Z)</option>
                 <option value="level">Difficulty Level</option>
               </select>
@@ -167,7 +176,7 @@ const Courses = () => {
             {(searchQuery || selectedCategory !== 'All' || selectedLevel !== 'All') && (
               <button
                 onClick={handleResetFilters}
-                className="flex items-center space-x-1 text-slate-500 hover:text-slate-800 transition pl-2"
+                className="flex items-center space-x-1 text-brand-600 hover:text-brand-800 font-bold transition pl-2"
                 title="Reset all filters"
               >
                 <RotateCcw className="w-3.5 h-3.5" />

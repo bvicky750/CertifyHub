@@ -1,10 +1,12 @@
-import React, { useRef } from 'react';
-import { X, Download, ExternalLink, Printer, Award, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Download, ExternalLink, Printer, Award, ShieldCheck, CheckCircle2, Copy, Check } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 const CertificateModal = ({ certificate, isOpen, onClose }) => {
   const certificateRef = useRef(null);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   if (!isOpen || !certificate) return null;
 
@@ -14,10 +16,19 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
     day: 'numeric'
   });
 
+  const verifyUrl = `${window.location.origin}/verify?id=${encodeURIComponent(certificate.certificate_number || '')}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(verifyUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const handleDownloadPdf = async () => {
-    if (!certificateRef.current) return;
+    if (!certificateRef.current || downloading) return;
 
     try {
+      setDownloading(true);
       const canvas = await html2canvas(certificateRef.current, {
         scale: 2,
         useCORS: true,
@@ -38,40 +49,50 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
     } catch (err) {
       console.error('PDF generation error:', err);
       // Fallback to backend PDF endpoint
-      window.open(`http://localhost:5000/api/certificates/${certificate.id || certificate.certificate_number}/pdf`, '_blank');
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      window.open(`${apiUrl}/certificates/${certificate.id || certificate.certificate_number}/pdf`, '_blank');
+    } finally {
+      setDownloading(false);
     }
   };
 
-  const verifyUrl = `${window.location.origin}/verify?id=${encodeURIComponent(certificate.certificate_number || '')}`;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl overflow-hidden my-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+      <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden my-8 border border-slate-200">
         
         {/* Modal Top Control Bar */}
         <div className="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800">
           <div className="flex items-center space-x-2">
             <Award className="w-5 h-5 text-amber-400" />
-            <span className="font-semibold text-sm">Official Academic Credential</span>
+            <span className="font-bold text-sm tracking-wide">Official Academic Credential</span>
           </div>
           <div className="flex items-center space-x-2">
             <button
+              onClick={handleCopyLink}
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 rounded-xl transition text-slate-200 border border-slate-700"
+              title="Copy verification URL"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Link Copied!' : 'Copy Link'}</span>
+            </button>
+            <button
               onClick={handleDownloadPdf}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold bg-brand-600 hover:bg-brand-500 rounded-lg transition text-white shadow-sm"
+              disabled={downloading}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 text-xs font-bold bg-brand-600 hover:bg-brand-500 rounded-xl transition text-white shadow-md shadow-brand-600/30 disabled:opacity-50"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download PDF</span>
+              <span>{downloading ? 'Preparing PDF...' : 'Download PDF'}</span>
             </button>
             <button
               onClick={() => window.print()}
-              className="hidden sm:flex items-center space-x-1 px-3 py-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 rounded-lg transition text-slate-200"
+              className="hidden sm:flex items-center space-x-1 px-3 py-1.5 text-xs font-medium bg-slate-800 hover:bg-slate-700 rounded-xl transition text-slate-200 border border-slate-700"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+              className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition ml-1"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -80,18 +101,18 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
         </div>
 
         {/* Certificate Display Canvas */}
-        <div className="p-4 sm:p-8 bg-slate-100 flex justify-center">
+        <div className="p-4 sm:p-8 bg-slate-100/90 flex justify-center">
           <div
             id="certificate-print-area"
             ref={certificateRef}
-            className="w-full max-w-3xl aspect-[1.414/1] bg-gradient-to-br from-white via-slate-50 to-white text-slate-900 p-8 sm:p-12 relative border-[10px] border-double border-slate-800 shadow-2xl rounded-sm flex flex-col justify-between"
+            className="w-full max-w-3xl aspect-[1.414/1] bg-gradient-to-br from-white via-amber-50/15 to-white text-slate-900 p-8 sm:p-12 relative border-[12px] border-double border-slate-850 shadow-2xl rounded-sm flex flex-col justify-between"
           >
             {/* Elegant Inner Border */}
-            <div className="absolute inset-2 border border-amber-600/40 pointer-events-none"></div>
+            <div className="absolute inset-2.5 border border-amber-600/50 pointer-events-none"></div>
 
             {/* Corner Filigrees */}
-            <div className="absolute top-4 left-4 text-xs tracking-widest text-amber-600/70 uppercase font-mono">✦ CERTIFYHUB ✦</div>
-            <div className="absolute top-4 right-4 text-xs tracking-widest text-amber-600/70 uppercase font-mono">✦ ACCREDITED ✦</div>
+            <div className="absolute top-4 left-4 text-[11px] tracking-widest text-amber-700/80 uppercase font-mono font-bold">✦ CERTIFYHUB ✦</div>
+            <div className="absolute top-4 right-4 text-[11px] tracking-widest text-amber-700/80 uppercase font-mono font-bold">✦ ACCREDITED ✦</div>
 
             {/* Certificate Header */}
             <div className="text-center pt-2">
@@ -101,19 +122,19 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
               <h1 className="text-2xl sm:text-4xl font-serif font-bold text-slate-900 tracking-wider">
                 CERTIFICATE OF COMPLETION
               </h1>
-              <div className="w-24 h-1 bg-gradient-to-r from-brand-600 via-amber-500 to-accent-600 mx-auto mt-2 rounded-full"></div>
+              <div className="w-28 h-1 bg-gradient-to-r from-brand-600 via-amber-500 to-accent-600 mx-auto mt-2 rounded-full"></div>
             </div>
 
             {/* Certificate Body */}
             <div className="text-center my-auto py-4">
               <p className="text-xs sm:text-sm text-slate-500 font-serif italic">
-                This certificate is proudly presented to
+                This certificate is proudly conferred to
               </p>
               <h2 className="text-xl sm:text-3xl font-serif font-bold text-brand-900 mt-2 mb-1 tracking-wide underline decoration-amber-500/50 decoration-2 underline-offset-8">
                 {certificate.student_name || 'Academic Scholar'}
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto mt-4 leading-relaxed font-serif">
-                for demonstrating exceptional competence and successfully fulfilling all curriculum requirements, hands-on modules, and the comprehensive final evaluation for
+                for demonstrating verified mastery and fulfilling all academic requirements, hands-on modules, and the comprehensive final evaluation for
               </p>
               <h3 className="text-base sm:text-2xl font-bold text-slate-900 mt-2 font-sans tracking-tight">
                 {certificate.course_title || 'Course of Study'}
@@ -155,16 +176,16 @@ const CertificateModal = ({ certificate, isOpen, onClose }) => {
 
         {/* Modal Bottom Bar */}
         <div className="px-6 py-4 bg-white border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-          <div className="flex items-center space-x-2 text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
+          <div className="flex items-center space-x-2 text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span className="font-medium">Digitally Signed & Database Verified</span>
+            <span className="font-semibold">Digitally Signed & Database Authenticated</span>
           </div>
 
           <a
             href={verifyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-1 text-brand-600 hover:text-brand-700 font-semibold"
+            className="inline-flex items-center space-x-1.5 text-brand-600 hover:text-brand-700 font-bold"
           >
             <span>Open Public Verification Page</span>
             <ExternalLink className="w-3.5 h-3.5" />
